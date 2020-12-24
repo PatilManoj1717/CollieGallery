@@ -72,6 +72,9 @@ open class CollieGallery: UIViewController, UIScrollViewDelegate, CollieGalleryV
     /// The close button
     open var closeButton: UIButton!
     
+    /// The share button
+    open var shareButton: UIButton!
+
     /// The action button
     open var actionButton: UIButton?
     
@@ -191,6 +194,8 @@ open class CollieGallery: UIViewController, UIScrollViewDelegate, CollieGalleryV
         setupScrollView()
         setupPictures()
         setupCloseButton()
+        setupShareButton()
+        
         
         if options.enableSave {
             setupActionButton()
@@ -277,6 +282,41 @@ open class CollieGallery: UIViewController, UIScrollViewDelegate, CollieGalleryV
         self.closeButton = closeButton
         
         view.addSubview(self.closeButton)
+    }
+    
+    fileprivate func setupShareButton() {
+        if self.shareButton != nil {
+            self.shareButton.removeFromSuperview()
+        }
+        
+        let avaiableSize = getInitialAvaiableSize()
+        let shareButtonFrame = getShareButtonFrame(avaiableSize)
+        
+        
+        let shareButton = UIButton(frame: shareButtonFrame)
+        if let customImageName = options.customCloseImageName,
+           let image = UIImage(named: customImageName) {
+            shareButton.setImage(image, for: UIControl.State())
+        } else {
+            shareButton.setTitle("Share", for: UIControl.State())
+            shareButton.titleLabel!.font = UIFont(name: "HelveticaNeue-Medium", size: 30)
+            shareButton.setTitleColor(theme.closeButtonColor, for: UIControl.State())
+            //shareButton.transform = CGAffineTransform(rotationAngle: CGFloat(CGFloat.pi / 4))
+        }
+        shareButton.addTarget(self, action: #selector(shareButtonTouched), for: .touchUpInside)
+        
+        var shouldBeHidden = false
+        
+        if self.shareButton != nil {
+            shouldBeHidden = shareButton.isHidden
+        }
+        
+        shareButton.isHidden = shouldBeHidden
+        
+        
+        self.shareButton = shareButton
+        
+        view.addSubview(self.shareButton)
     }
     
     fileprivate func setupActionButton() {
@@ -368,6 +408,7 @@ open class CollieGallery: UIViewController, UIScrollViewDelegate, CollieGalleryV
         activityController?.popoverPresentationController?.sourceRect = popOverPresentationRect
         
         setupCloseButton()
+        setupShareButton()
         setupActionButton()
         
         updateContentOffset()
@@ -454,6 +495,7 @@ open class CollieGallery: UIViewController, UIScrollViewDelegate, CollieGalleryV
     
     fileprivate func showControls() {
         closeButton.isHidden = false
+        shareButton.isHidden = false
         actionButton?.isHidden = false
         progressTrackView?.isHidden = false
         captionView.isHidden = captionView.titleLabel.text == nil && captionView.captionLabel.text == nil
@@ -462,6 +504,7 @@ open class CollieGallery: UIViewController, UIScrollViewDelegate, CollieGalleryV
                        options: UIView.AnimationOptions(),
                                    animations: { [weak self] in
                                                     self?.closeButton.alpha = 1.0
+                                                    self?.shareButton.alpha = 1.0
                                                     self?.actionButton?.alpha = 1.0
                                                     self?.progressTrackView?.alpha = 1.0
                                                     self?.captionView.alpha = 1.0
@@ -473,12 +516,14 @@ open class CollieGallery: UIViewController, UIScrollViewDelegate, CollieGalleryV
                        options: UIView.AnimationOptions(),
                                    animations: { [weak self] in
                                         self?.closeButton.alpha = 0.0
+                                        self?.shareButton.alpha = 0.0
                                         self?.actionButton?.alpha = 0.0
                                         self?.progressTrackView?.alpha = 0.0
                                         self?.captionView.alpha = 0.0
                                    },
                                    completion: { [weak self] _ in
                                         self?.closeButton.isHidden = true
+                                        self?.shareButton.isHidden = true
                                         self?.actionButton?.isHidden = true
                                         self?.progressTrackView?.isHidden = true
                                         self?.captionView.isHidden = true
@@ -500,7 +545,11 @@ open class CollieGallery: UIViewController, UIScrollViewDelegate, CollieGalleryV
     fileprivate func getCloseButtonFrame(_ avaiableSize: CGSize) -> CGRect {
         return CGRect(x: 0, y: 0, width: 50, height: 50)
     }
-    
+
+    fileprivate func getShareButtonFrame(_ avaiableSize: CGSize) -> CGRect {
+        return CGRect(x: avaiableSize.width/2-50, y: avaiableSize.height - 100, width: 100, height: 100)
+    }
+
     fileprivate func getActionButtonFrame(_ avaiableSize: CGSize) -> CGRect {
         return CGRect(x: avaiableSize.width - 50, y: 0, width: 50, height: 50)
     }
@@ -544,6 +593,14 @@ open class CollieGallery: UIViewController, UIScrollViewDelegate, CollieGalleryV
     // MARK: - Internal functions
     @objc internal func closeButtonTouched(_ sender: AnyObject) {
         dismiss(animated: true, completion: nil)
+    }
+    
+    // MARK: - Internal functions
+    @objc internal func shareButtonTouched(_ sender: AnyObject) {
+        if let shareCallBack = options.shareCallBack {
+            shareCallBack(0)
+            return
+        }
     }
     
     @objc internal func actionButtonTouched(_ sender: AnyObject) {
