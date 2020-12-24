@@ -88,7 +88,7 @@ internal class CollieGalleryView: UIView, UIScrollViewDelegate {
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.minimumZoomScale = 1.0
         scrollView.maximumZoomScale = options.maximumZoomScale
-        scrollView.decelerationRate = UIScrollView.DecelerationRate.fast
+        scrollView.decelerationRate = UIScrollViewDecelerationRateFast
         scrollView.backgroundColor = UIColor.clear
         isUserInteractionEnabled = options.enableZoom
         
@@ -226,16 +226,16 @@ internal class CollieGalleryView: UIView, UIScrollViewDelegate {
                                                         queue: mainQueue,
                                                         completionHandler:
                     { [weak self] response, data, error in
-                    if error == nil {
-                        let image = UIImage(data: data!)!
-                        
-                        DispatchQueue.main.async(execute: {
-                            self?.imageView.image = image
-                            self?.updateImageViewSize()
-                            
-                            self?.activityIndicator.stopAnimating()
-                        })
-                    }
+                        if error == nil {
+                            // nil check added by manoj
+                            if let image = UIImage(data: data!) {
+                                DispatchQueue.main.async(execute: {
+                                    self?.imageView.image = image
+                                    self?.updateImageViewSize()
+                                    self?.activityIndicator.stopAnimating()
+                                })
+                            }
+                        }
                 })
             }
         }

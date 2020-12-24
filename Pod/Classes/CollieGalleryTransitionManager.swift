@@ -69,6 +69,12 @@ UIViewControllerTransitioningDelegate  {
             default:
                 if(d > 0.1){
                     self.finish()
+                    
+                    // Code added by Manoj.. Not right.. but its jugad
+                    if sourceViewController != nil {
+                        print("viewWillAppear --- called")
+                        sourceViewController.viewWillAppear(true)
+                    }
                 }
                 else {
                     self.cancel()
