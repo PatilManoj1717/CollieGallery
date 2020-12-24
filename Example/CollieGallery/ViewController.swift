@@ -65,9 +65,9 @@ class ViewController: UIViewController, CollieGalleryZoomTransitionDelegate, Col
         }
         
         options.customActions = [customAction]
-        options.shareCallBack = { (id) -> Void in
+        options.shareCallBack = { (image) -> Void in
             print("shareCallBack")
-            print(id)
+            print(image)
         }
         
         options.excludedActions = [UIActivity.ActivityType.assignToContact, UIActivity.ActivityType.copyToPasteboard, UIActivity.ActivityType.print]

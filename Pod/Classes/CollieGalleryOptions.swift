@@ -68,8 +68,11 @@ open class CollieGalleryOptions: NSObject {
     /// Add fire custom block instead of showing default share menu
     open var customOptionsBlock: (() -> Void)?
     
-    /// Add fire custom block instead of showing default share menu
-    open var shareCallBack: ((_ id: Int) -> Void)?
+    /// Add custom block instead of showing default share menu
+    open var shareCallBack: ((_ image: UIImage) -> Void)?
+    
+    /// Custom close button image name
+    open var customShareImageName: String? = nil
 
     /// Array with the custom buttons
     open var customActions: [CollieGalleryCustomAction] = []

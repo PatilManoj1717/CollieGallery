@@ -294,7 +294,7 @@ open class CollieGallery: UIViewController, UIScrollViewDelegate, CollieGalleryV
         
         
         let shareButton = UIButton(frame: shareButtonFrame)
-        if let customImageName = options.customCloseImageName,
+        if let customImageName = options.customShareImageName,
            let image = UIImage(named: customImageName) {
             shareButton.setImage(image, for: UIControl.State())
         } else {
@@ -598,7 +598,9 @@ open class CollieGallery: UIViewController, UIScrollViewDelegate, CollieGalleryV
     // MARK: - Internal functions
     @objc internal func shareButtonTouched(_ sender: AnyObject) {
         if let shareCallBack = options.shareCallBack {
-            shareCallBack(0)
+            if let img = pictureViews[currentPageIndex].imageView.image {
+                shareCallBack(img)
+            }
             return
         }
     }
